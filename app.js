@@ -4,8 +4,9 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mongoose = require('mongoose');
-var mongoDB =
+var dev_db_url =
   'mongodb+srv://dbUser:dbUserPassword@cluster0-22ao9.azure.mongodb.net/local-lib?retryWrites=true&w=majority';
+var mongoDB = process.env.MONGODB_URI || dev_db_url; // Get database from environment if set
 mongoose.connect(mongoDB, { useNewUrlParser: true });
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
