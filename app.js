@@ -15,6 +15,7 @@ var usersRouter = require('./routes/users');
 var catalogRouter = require('./routes/catalog');
 
 var compression = require('compression');
+var helmet = require('helmet');
 
 var app = express();
 
@@ -28,6 +29,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(compression()); // compress all routes
+app.use(helmet()); // Protect site against known web vulnerabilities
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
