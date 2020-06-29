@@ -73,7 +73,14 @@ exports.genre_create_post = [
     // create a  genre object with escaped and trimmed data
     var genre = new Genre({ name: req.body.name });
 
-
+    if (!errors.isEmpty()) {
+      // there are errors. Render the form again with sanitized values/error messages.
+      res.render('genre_form', {
+        title: 'Create Genre',
+        genre: genre,
+        errors: errors.array(),
+      });
+    }
   },
 ];
 
