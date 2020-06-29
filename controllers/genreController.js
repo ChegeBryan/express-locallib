@@ -58,9 +58,24 @@ exports.genre_create_get = function (req, res) {
 };
 
 // Handle Genre create on POST.
-exports.genre_create_post = function (req, res) {
-  res.send('NOT IMPLEMENTED: Genre create POST');
-};
+exports.genre_create_post = [
+  // Validate the that the name field is not empty
+  validator.body('name', 'Genre name required').trim().isLength({ min: 1 }),
+
+  // Sanitize (escape) the name field
+  validator.sanitizeBody('name').escape(),
+
+  // process request after validation and sanitization
+  (req, res, next) => {
+    // Extract the validation errors from a request
+    const errors = validator.validationResult(req);
+
+    // create a  genre object with escaped and trimmed data
+    var genre = new Genre({ name: req.body.name });
+
+
+  },
+];
 
 // Display Genre delete form on GET.
 exports.genre_delete_get = function (req, res) {
