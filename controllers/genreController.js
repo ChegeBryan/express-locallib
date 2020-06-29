@@ -80,6 +80,25 @@ exports.genre_create_post = [
         genre: genre,
         errors: errors.array(),
       });
+      return;
+    } else {
+      // data from form is valid
+      // check if genre with same name already exists
+      Genre.findOne({ name: req.body.name }).exec(function (err, found_genre) {
+        if (err) {
+          return next(err);
+        }
+
+        if (found_genre) {
+          // Genre exists, redirect to its detail page
+          res.redirect(found_genre.url);
+        } else {
+          genre.save(function (err) {
+            // Genre saved. redirect to genre detail page
+            res.redirect(genre.url);
+          });
+        }
+      });
     }
   },
 ];
