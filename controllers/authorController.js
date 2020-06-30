@@ -100,6 +100,23 @@ exports.author_create_post = [
         error: errors,
       });
       return;
+    } else {
+      // date from form is valid
+
+      // Create an author object with escaped and trimmed data
+      var author = new Author({
+        first_name: req.body.first_name,
+        family_name: req.body.family_name,
+        date_of_birth: req.body.date_of_birth,
+        date_of_death: req.body.date_of_death,
+      });
+      author.save(function (err) {
+        if (err) {
+          return next(err);
+        }
+        // Successfull - redirect to a new author record
+        res.redirect(author.url);
+      });
     }
   },
 ];
