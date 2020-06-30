@@ -86,6 +86,22 @@ exports.author_create_post = [
   sanitizeBody('family_name').escape(),
   sanitizeBody('date_of_birth').escape(),
   sanitizeBody('date_of_death').escape(),
+
+  // Process request after validation and sanitisation
+  (req, res, next) => {
+    // extract the validation errors from a request
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      // there are errors, render form again with sanitised values/error messages
+      res.render('author_form', {
+        title: 'Create author',
+        author: res.body,
+        error: errors,
+      });
+      return;
+    }
+  },
 ];
 
 // Display Author delete form on GET.
