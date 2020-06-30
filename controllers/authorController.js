@@ -80,6 +80,12 @@ exports.author_create_post = [
   body('date_of_death', 'Invalid date of death')
     .optional({ checkFalsy: true })
     .isISO8601(),
+
+  // Sanitise fields
+  sanitizeBody('first_name').escape(),
+  sanitizeBody('family_name').escape(),
+  sanitizeBody('date_of_birth').escape(),
+  sanitizeBody('date_of_death').escape(),
 ];
 
 // Display Author delete form on GET.
