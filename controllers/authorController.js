@@ -60,9 +60,27 @@ exports.author_create_get = function (req, res) {
 };
 
 // Handle Author create on POST.
-exports.author_create_post = function (req, res) {
-  res.send('NOT IMPLEMENTED: Author create POST');
-};
+exports.author_create_post = [
+  // Validate fields
+  body('first_name')
+    .isLength({ min: 1 })
+    .trim()
+    .withMessage('First name must be specified')
+    .isAlphanumeric()
+    .withMessage('First name has non-alphanumeric characters.'),
+  body('family_name')
+    .isLength({ min: 1 })
+    .trim()
+    .withMessage('Family name must be specified')
+    .isAlphanumeric()
+    .withMessage('Family name has non-alphanumeric characters.'),
+  body('date_of_birth', 'Invalid date of birth')
+    .optional({ checkFalsy: true })
+    .isISO8601(),
+  body('date_of_death', 'Invalid date of death')
+    .optional({ checkFalsy: true })
+    .isISO8601(),
+];
 
 // Display Author delete form on GET.
 exports.author_delete_get = function (req, res) {
