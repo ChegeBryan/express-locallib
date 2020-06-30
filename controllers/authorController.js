@@ -2,6 +2,10 @@ var async = require('async');
 var Book = require('../models/book');
 var Author = require('../models/author');
 
+// Import validation and sanitisation methods
+const { body, validationResult } = require('express-validator');
+const { sanitizeBody } = require('express-validator');
+
 // Display list of all Authors.
 exports.author_list = function (req, res) {
   Author.find()
