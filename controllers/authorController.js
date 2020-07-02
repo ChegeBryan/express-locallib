@@ -3,8 +3,7 @@ var Book = require('../models/book');
 var Author = require('../models/author');
 
 // Import validation and sanitisation methods
-const { body, validationResult } = require('express-validator');
-const { sanitizeBody } = require('express-validator');
+const { check, validationResult } = require('express-validator');
 
 // Display list of all Authors.
 exports.author_list = function (req, res) {
@@ -62,30 +61,28 @@ exports.author_create_get = function (req, res) {
 // Handle Author create on POST.
 exports.author_create_post = [
   // Validate fields
-  body('first_name')
+  check('first_name')
     .isLength({ min: 1 })
     .trim()
     .withMessage('First name must be specified')
     .isAlphanumeric()
-    .withMessage('First name has non-alphanumeric characters.'),
-  body('family_name')
+    .withMessage('First name has non-alphanumeric characters.')
+    .escape(),
+  check('family_name')
     .isLength({ min: 1 })
     .trim()
     .withMessage('Family name must be specified')
     .isAlphanumeric()
-    .withMessage('Family name has non-alphanumeric characters.'),
-  body('date_of_birth', 'Invalid date of birth')
+    .withMessage('Family name has non-alphanumeric characters.')
+    .escape(),
+  check('date_of_birth', 'Invalid date of birth')
     .optional({ checkFalsy: true })
-    .isISO8601(),
-  body('date_of_death', 'Invalid date of death')
+    .isISO8601()
+    .escape(),
+  check('date_of_death', 'Invalid date of death')
     .optional({ checkFalsy: true })
-    .isISO8601(),
-
-  // Sanitise fields
-  sanitizeBody('first_name').escape(),
-  sanitizeBody('family_name').escape(),
-  sanitizeBody('date_of_birth').escape(),
-  sanitizeBody('date_of_death').escape(),
+    .isISO8601()
+    .escape(),
 
   // Process request after validation and sanitisation
   (req, res, next) => {
