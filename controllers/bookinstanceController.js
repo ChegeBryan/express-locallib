@@ -94,7 +94,14 @@ exports.bookinstance_create_post = [
           errors: errors.array(),
           bookinstance: bookinstance,
         });
-        return;
+      });
+      return;
+    } else {
+      // Date from form is valid
+      bookinstance.save(function (err) {
+        if (err) {
+          return next(err);
+        }
       });
     }
   },
