@@ -108,7 +108,14 @@ exports.book_create_get = function (req, res) {
 
 // Handle book create on POST.
 exports.book_create_post = function (req, res) {
-  res.send('NOT IMPLEMENTED: Book create POST');
+  // Convert the genre to an array
+  (req, res, next) => {
+    if (!(req.body.genre instanceof Array)) {
+      if (typeof req.body.genre === 'undefined') req.body.genre = [];
+      else req.body.genre = new Array(req.body.genre);
+    }
+    next();
+  },
 };
 
 // Display book delete form on GET.
