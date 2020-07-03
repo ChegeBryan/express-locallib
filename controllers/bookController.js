@@ -186,6 +186,8 @@ exports.book_create_post = [
         if (err) {
           return next(err);
         }
+        // Successfull -  redirect to new book record
+        res.redirect(book.url);
       });
     }
   },
