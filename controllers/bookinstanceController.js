@@ -1,4 +1,5 @@
 var BookInstance = require('../models/bookinstance');
+var Book = require('../models/book');
 
 // Display list of all BookInstances.
 exports.bookinstance_list = function (req, res) {
@@ -40,7 +41,16 @@ exports.bookinstance_detail = function (req, res) {
 
 // Display BookInstance create form on GET.
 exports.bookinstance_create_get = function (req, res) {
-  res.send('NOT IMPLEMENTED: BookInstance create GET');
+  Book.find({}, 'title').exec(function (err, books) {
+    if (err) {
+      return next(err);
+    }
+    // Successful so render
+    res.render('bookinstance_form', {
+      title: 'Create BookInstance',
+      book_list: books,
+    });
+  });
 };
 
 // Handle BookInstance create on POST.
