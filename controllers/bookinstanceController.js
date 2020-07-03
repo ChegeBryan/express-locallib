@@ -102,6 +102,8 @@ exports.bookinstance_create_post = [
         if (err) {
           return next(err);
         }
+        // Successful - redirect to a new record
+        res.redirect(bookinstance.url);
       });
     }
   },
