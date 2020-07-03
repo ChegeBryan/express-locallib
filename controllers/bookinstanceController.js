@@ -1,7 +1,8 @@
 var BookInstance = require('../models/bookinstance');
 var Book = require('../models/book');
 
-const { check } = require('express-validator');
+const { check, validationResult } = require('express-validator');
+const bookinstance = require('../models/bookinstance');
 
 // Display list of all BookInstances.
 exports.bookinstance_list = function (req, res) {
@@ -66,6 +67,19 @@ exports.bookinstance_create_post = [
   check('due_back', 'Invalid date').optional({ checkFalsy: true }).isISO8601(),
   check('status').trim().escape(),
   check('due_back').toDate(),
+
+  (req, res, next) => {
+    // extract the validation errors from a request
+    const errors = validationResult(req);
+
+    // Create a bookinstance object with escaped and trimmed data
+    var bookinstance = new BookInstance({
+      book: req.body.book,
+      imprint: req.body.imprint,
+      status: req.body.status,
+      due_back: req.body.due_back,
+    });
+  },
 ];
 
 // Display BookInstance delete form on GET.
