@@ -4,7 +4,7 @@ var Genre = require('../models/genre');
 var BookInstance = require('../models/bookinstance');
 
 var async = require('async');
-const { check } = require('express-validator');
+const { check, validationResult } = require('express-validator');
 
 exports.index = function (req, res) {
   async.parallel(
@@ -132,6 +132,21 @@ exports.book_create_post = [
     .isLength({ min: 1 })
     .escape(),
   check('isbn', 'ISBN must not be empty.').trim().isLength({ min: 1 }).escape(),
+
+  // Process the request after validation and sanitisation
+  (req, res, next) => {
+    // Extract the validation errors from a request
+    const errors = validationResult(req);
+
+    // create a book object with escaped and trimmed data
+    var book = new Book({
+      title: req.body.title,
+      author: req.body.author,
+      summary: req.body.summary,
+      isbn: req.body.isbn,
+      genre: req.body.isbn,
+    });
+  },
 ];
 
 // Display book delete form on GET.
