@@ -180,6 +180,13 @@ exports.book_create_post = [
           return;
         }
       );
+    } else {
+      // Data from form is valid. Save book
+      book.save(function (err) {
+        if (err) {
+          return next(err);
+        }
+      });
     }
   },
 ];
