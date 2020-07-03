@@ -1,6 +1,8 @@
 var BookInstance = require('../models/bookinstance');
 var Book = require('../models/book');
 
+const { check } = require('express-validator');
+
 // Display list of all BookInstances.
 exports.bookinstance_list = function (req, res) {
   BookInstance.find()
@@ -54,9 +56,17 @@ exports.bookinstance_create_get = function (req, res) {
 };
 
 // Handle BookInstance create on POST.
-exports.bookinstance_create_post = function (req, res) {
-  res.send('NOT IMPLEMENTED: BookInstance create POST');
-};
+exports.bookinstance_create_post = [
+  // Validate fields
+  check('book', 'Book must be specified').trim().isLength({ min: 1 }).escape(),
+  check('imprint', 'Imprint must be specified.')
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  check('due_back', 'Invalid date').optional({ checkFalsy: true }).isISO8601(),
+  check('status').trim().escape(),
+  check('due_back').toDate(),
+];
 
 // Display BookInstance delete form on GET.
 exports.bookinstance_delete_get = function (req, res) {
