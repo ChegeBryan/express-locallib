@@ -5,6 +5,7 @@ var BookInstance = require('../models/bookinstance');
 
 var async = require('async');
 const { check, validationResult } = require('express-validator');
+const { author_update_get } = require('./authorController');
 
 exports.index = function (req, res) {
   async.parallel(
@@ -146,6 +147,40 @@ exports.book_create_post = [
       isbn: req.body.isbn,
       genre: req.body.isbn,
     });
+
+    if (!errors.isEmpty()) {
+      // There are no errors. Render form again with sanitized values/errors
+      async.parallel(
+        {
+          authors: function (callback) {
+            Author.find(callback);
+          },
+          genres: function (callback) {
+            Genre.find(callback);
+          },
+        },
+        function (err, results) {
+          if (err) {
+            return next(err);
+          }
+
+          // Mark our selected genres as checked
+          for (let i = 0; i < results.genres.length; i++) {
+            if (book.genre.indexOf(results.genres[i]._id) > -1) {
+              results.genres[i].checked = 'true';
+            }
+          }
+          res.render('book_form', {
+            title: 'Create Book',
+            authors: results.authors,
+            genres: results.genres,
+            book: book,
+            errors: errors.array(),
+          });
+          return;
+        }
+      );
+    }
   },
 ];
 
