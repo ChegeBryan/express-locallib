@@ -4,6 +4,7 @@ var Genre = require('../models/genre');
 var BookInstance = require('../models/bookinstance');
 
 var async = require('async');
+const { check } = require('express-validator');
 
 exports.index = function (req, res) {
   async.parallel(
@@ -107,7 +108,7 @@ exports.book_create_get = function (req, res) {
 };
 
 // Handle book create on POST.
-exports.book_create_post = function (req, res) {
+exports.book_create_post = [
   // Convert the genre to an array
   (req, res, next) => {
     if (!(req.body.genre instanceof Array)) {
@@ -116,7 +117,22 @@ exports.book_create_post = function (req, res) {
     }
     next();
   },
-};
+
+  // Validate fields
+  check('title', 'Title must not be empty.')
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  check('author', 'Author must not be empty.')
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  check('summary', 'Summary must not be empty.')
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  check('isbn', 'ISBN must not be empty.').trim().isLength({ min: 1 }).escape(),
+];
 
 // Display book delete form on GET.
 exports.book_delete_get = function (req, res) {
