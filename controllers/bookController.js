@@ -145,7 +145,7 @@ exports.book_create_post = [
       author: req.body.author,
       summary: req.body.summary,
       isbn: req.body.isbn,
-      genre: req.body.isbn,
+      genre: req.body.genre,
     });
 
     if (!errors.isEmpty()) {
