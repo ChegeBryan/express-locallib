@@ -125,7 +125,7 @@ exports.author_delete_get = function (req, res) {
       author: function (callback) {
         Author.findById(req.params.id).exec(callback);
       },
-      authors_books: function (callback) {
+      author_books: function (callback) {
         Book.find({ author: req.params.id }).exec(callback);
       },
     },
@@ -153,7 +153,7 @@ exports.author_delete_post = function (req, res) {
     author: function (callback) {
       Author.findById(req.body.authorid).exec(callback);
     },
-    authors_books: function (callback) {
+    author_books: function (callback) {
       Book.find({ author: req.body.authorid }).exec(callback);
     },
     function(err, results) {
