@@ -17,7 +17,12 @@ exports.index = function (req, res) {
         BookInstance.countDocuments({}, callback);
       },
       book_instance_available_count: function (callback) {
-        BookInstance.countDocuments({ status: 'Available' }, callback);
+        BookInstance.countDocuments(
+          {
+            status: 'Available',
+          },
+          callback
+        );
       },
       author_count: function (callback) {
         Author.countDocuments({}, callback);
@@ -45,7 +50,10 @@ exports.book_list = function (req, res) {
         return next(err);
       }
       //Successful, so render
-      res.render('book_list', { title: 'Book List', book_list: list_books });
+      res.render('book_list', {
+        title: 'Book List',
+        book_list: list_books,
+      });
     });
 };
 
@@ -60,7 +68,9 @@ exports.book_detail = function (req, res, next) {
           .exec(callback);
       },
       book_instance: function (callback) {
-        BookInstance.find({ book: req.params.id }).exec(callback);
+        BookInstance.find({
+          book: req.params.id,
+        }).exec(callback);
       },
     },
     function (err, results) {
@@ -122,17 +132,28 @@ exports.book_create_post = [
   // Validate fields
   check('title', 'Title must not be empty.')
     .trim()
-    .isLength({ min: 1 })
+    .isLength({
+      min: 1,
+    })
     .escape(),
   check('author', 'Author must not be empty.')
     .trim()
-    .isLength({ min: 1 })
+    .isLength({
+      min: 1,
+    })
     .escape(),
   check('summary', 'Summary must not be empty.')
     .trim()
-    .isLength({ min: 1 })
+    .isLength({
+      min: 1,
+    })
     .escape(),
-  check('isbn', 'ISBN must not be empty.').trim().isLength({ min: 1 }).escape(),
+  check('isbn', 'ISBN must not be empty.')
+    .trim()
+    .isLength({
+      min: 1,
+    })
+    .escape(),
 
   // Process the request after validation and sanitisation
   (req, res, next) => {
@@ -195,7 +216,60 @@ exports.book_create_post = [
 
 // Display book delete form on GET.
 exports.book_delete_get = function (req, res) {
-  res.send('NOT IMPLEMENTED: Book delete GET');
+  // Get book, authors and genres for form.
+  async.parallel(
+    {
+      book: function (callback) {
+        Book.findById(req.params.id)
+          .populate('author')
+          .populate('genre')
+          .exec(callback);
+      },
+      authors: function (callback) {
+        Author.find(callback);
+      },
+      genres: function (callback) {
+        Genre.find(callback);
+      },
+    },
+    function (err, results) {
+      if (err) {
+        return next(err);
+      }
+      if (results.book == null) {
+        // No results.
+        var err = new Error('Book not found');
+        err.status = 404;
+        return next(err);
+      }
+      // Success.
+      // Mark our selected genres as checked.
+      for (
+        var all_g_iter = 0;
+        all_g_iter < results.genres.length;
+        all_g_iter++
+      ) {
+        for (
+          var book_g_iter = 0;
+          book_g_iter < results.book.genre.length;
+          book_g_iter++
+        ) {
+          if (
+            results.genres[all_g_iter]._id.toString() ==
+            results.book.genre[book_g_iter]._id.toString()
+          ) {
+            results.genres[all_g_iter].checked = 'true';
+          }
+        }
+      }
+      res.render('book_form', {
+        title: 'Update Book',
+        authors: results.authors,
+        genres: results.genres,
+        book: results.book,
+      });
+    }
+  );
 };
 
 // Handle book delete on POST.
