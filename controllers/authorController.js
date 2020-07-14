@@ -119,7 +119,7 @@ exports.author_create_post = [
 ];
 
 // Display Author delete form on GET.
-exports.author_delete_get = function (req, res) {
+exports.author_delete_get = function (req, res, next) {
   async.parallel(
     {
       author: function (callback) {
@@ -148,15 +148,17 @@ exports.author_delete_get = function (req, res) {
 };
 
 // Handle Author delete on POST.
-exports.author_delete_post = function (req, res) {
-  async.parallel({
-    author: function (callback) {
-      Author.findById(req.body.authorid).exec(callback);
+exports.author_delete_post = function (req, res, next) {
+  async.parallel(
+    {
+      author: function (callback) {
+        Author.findById(req.body.authorid).exec(callback);
+      },
+      author_books: function (callback) {
+        Book.find({ author: req.body.authorid }).exec(callback);
+      },
     },
-    author_books: function (callback) {
-      Book.find({ author: req.body.authorid }).exec(callback);
-    },
-    function(err, results) {
+    function (err, results) {
       if (err) {
         return next(err);
       }
@@ -178,8 +180,8 @@ exports.author_delete_post = function (req, res) {
           res.redirect('/catalog/authors');
         });
       }
-    },
-  });
+    }
+  );
 };
 
 // Display Author update form on GET.
