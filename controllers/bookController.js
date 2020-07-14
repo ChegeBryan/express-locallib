@@ -279,7 +279,21 @@ exports.book_delete_post = function (req, res) {
 
 // Display book update form on GET.
 exports.book_update_get = function (req, res) {
-  res.send('NOT IMPLEMENTED: Book update GET');
+  // Get book, genre and authors to use on form
+  async.parallel({
+    book: function (callback) {
+      Book.findById(req.params.id)
+        .populate('author')
+        .populate('genre')
+        .exec(callback);
+    },
+    authors: function (callback) {
+      Author.find(callback);
+    },
+    genres: function (callback) {
+      Genre.find(callback);
+    },
+  });
 };
 
 // Handle book update on POST.
